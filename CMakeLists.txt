@@ -16,9 +16,9 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMakeTargets")
 
 message(STATUS "Current project root dir '${PROJECT_ROOT_DIR}'.")
 
-OPTION(DEVKIT_BUILD_TESTS OFF)
+OPTION(DEVKIT_ENABLE_TESTS OFF)
 
-if(DEVKIT_BUILD_TESTS AND (EXISTS ${PROJECT_ROOT_DIR}/tests/CMakeLists.txt))
+if(DEVKIT_ENABLE_TESTS AND (EXISTS ${PROJECT_ROOT_DIR}/tests/CMakeLists.txt))
 GLOBAL_BUILD_OUTDIR("bin" "bin/tests/" "objs")
 add_subdirectory(${PROJECT_ROOT_DIR}/tests/)
 GLOBAL_BUILD_OUTDIR("")
