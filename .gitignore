@@ -2,7 +2,8 @@ bin
 objs
 libs
 build
-.vscode
+.vscode/launch.json
+.vscode/tasks.json
 # Prerequisites
 #*.d
 
