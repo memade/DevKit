@@ -1,5 +1,5 @@
-//#include <stl.hpp>
-#include "../runtimes/stl/include/stl.hpp"
+#include <stl.hpp>
+//#include "../runtimes/stl/include/stl.hpp"
 #pragma comment(lib, "libstl.a")
 int main()
 {

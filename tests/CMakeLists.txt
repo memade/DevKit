@@ -42,7 +42,7 @@ foreach(entry ${entries})
     if("${lower_entry_name}" STREQUAL "test_stl")
       target_include_directories(${entry_name} 
       PRIVATE
-      ${PROJECT_ROOT_DIR}/bin/runtimes/stl/${CMAKE_SYSTEM_NAME}/include
+      ${PROJECT_ROOT_DIR}/runtimes/stl/include
       )
       target_link_directories(${entry_name}
       PRIVATE
