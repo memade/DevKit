@@ -31,6 +31,11 @@
 #include <thread>
 #include <tuple>
 #include <typeinfo>
+#include <iomanip>
+
+#if __cplusplus >= 199711L //!@ C++ 98 is supported
+
+#endif
 
 #if __cplusplus >= 201103L //!@ C++11 is supported
 
@@ -39,6 +44,7 @@
 #if __cplusplus >= 201402L //!@ C++14 is supported
 
 #endif
+
 
 #if __cplusplus >= 201703L //!@ C++17 is supported
 //!@discard -- #include <locale>
@@ -69,213 +75,211 @@
 namespace stl
 {
 
- template <typename T = std::chrono::seconds>
+  template <typename T = std::chrono::seconds>
 #if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::chrono::milliseconds> ||
-           std::is_convertible_v<T, std::chrono::minutes> ||
-           std::is_convertible_v<T, std::chrono::microseconds>
+    requires std::is_convertible_v<T, std::chrono::milliseconds> ||
+             std::is_convertible_v<T, std::chrono::minutes> ||
+             std::is_convertible_v<T, std::chrono::microseconds>
 #endif
- static std::time_t TimeStamp()
- {
-  return std::chrono::duration_cast<T>(
-             std::chrono::time_point_cast<T>(std::chrono::system_clock::now())
-                 .time_since_epoch())
-      .count();
- }
-
- template <typename T = std::string>
-#if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
-#endif
- static T Lower(const T &input)
- {
-  T result{input};
-  if (!result.empty())
+  static std::time_t TimeStamp()
   {
-   std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+    return std::chrono::duration_cast<T>(
+               std::chrono::time_point_cast<T>(std::chrono::system_clock::now())
+                   .time_since_epoch())
+        .count();
   }
-  return result;
- }
 
- template <typename T = std::string>
+  template <typename T = std::string>
 #if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+    requires std::is_convertible_v<T, std::string> ||
+             std::is_convertible_v<T, std::wstring>
 #endif
- static T Upper(const T &input)
- {
-  T result{input};
-  if (!result.empty())
+  static T Lower(const T &input)
   {
-   std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+    T result{input};
+    if (!result.empty())
+    {
+      std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+    }
+    return result;
   }
-  return result;
- }
 
- static std::string ReadFile(/*std::ios::_Nocreate | std::ios::_Noreplace | std::ios::binary*/
-                             const std::string &file_,
-                             const int &mode_ = std::ios::in | std::ios::binary)
- {
-  std::string result;
-  std::fstream of;
-  of.open(file_, static_cast<std::_Ios_Openmode>(mode_));
-  do
+  template <typename T = std::string>
+#if __cplusplus >= 201703L
+    requires std::is_convertible_v<T, std::string> ||
+             std::is_convertible_v<T, std::wstring>
+#endif
+  static T Upper(const T &input)
   {
-   if (!of.is_open())
-    break;
-   of.seekg(0, of.end);
-   size_t size = static_cast<size_t>(of.tellg());
-   if (size <= 0)
-    break;
-   result.resize(size, 0x00);
-   of.seekg(0, of.beg);
-   of.read(&result[0], size);
-  } while (0);
-  if (of.is_open())
-   of.close();
-  return result;
- }
+    T result{input};
+    if (!result.empty())
+    {
+      std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+    }
+    return result;
+  }
 
- static void ReadFile(/*std::ios::_Nocreate | std::ios::_Noreplace | std::ios::binary*/
-                      const std::string &file_,
-                      std::vector<char> &out_, const int &mode_ = std::ios::in | std::ios::binary)
- {
-  out_.clear();
-  std::fstream of;
-  of.open(file_, static_cast<std::_Ios_Openmode>(mode_));
-  do
+  static std::string ReadFile(/*std::ios::_Nocreate | std::ios::_Noreplace | std::ios::binary*/
+                              const std::string &file_,
+                              const int &mode_ = std::ios::in | std::ios::binary)
   {
-   if (!of.is_open())
-    break;
-   of.seekg(0, of.end);
-   size_t size = static_cast<size_t>(of.tellg());
-   if (size <= 0)
-    break;
-   out_.resize(size, 0x00);
-   of.seekg(0, of.beg);
-   of.read(&out_[0], size);
-  } while (0);
-  if (of.is_open())
-   of.close();
- }
+    std::string result;
+    std::fstream of(file_,static_cast<std::ios_base::openmode>(mode_));
+    do
+    {
+      if (!of.is_open())
+        break;
+      of.seekg(0, of.end);
+      size_t size = static_cast<size_t>(of.tellg());
+      if (size <= 0)
+        break;
+      result.resize(size, 0x00);
+      of.seekg(0, of.beg);
+      of.read(&result[0], size);
+    } while (0);
+    if (of.is_open())
+      of.close();
+    return result;
+  }
 
- static bool WriteFile(const std::string &file_, const std::string &data_,
-                       const int &mode_ = static_cast<int>(std::ios::binary) | static_cast<int>(std::ios::out) |
-                                          static_cast<int>(std::ios::trunc))
- {
-  bool result = false;
-  do
+  static void ReadFile(/*std::ios::_Nocreate | std::ios::_Noreplace | std::ios::binary*/
+                       const std::string &file_,
+                       std::vector<char> &out_, const int &mode_ = std::ios::in | std::ios::binary)
   {
-   if (data_.empty())
-    break;
+    out_.clear();
+std::fstream of(file_,static_cast<std::ios_base::openmode>(mode_));
+    do
+    {
+      if (!of.is_open())
+        break;
+      of.seekg(0, of.end);
+      size_t size = static_cast<size_t>(of.tellg());
+      if (size <= 0)
+        break;
+      out_.resize(size, 0x00);
+      of.seekg(0, of.beg);
+      of.read(&out_[0], size);
+    } while (0);
+    if (of.is_open())
+      of.close();
+  }
+
+  static bool WriteFile(const std::string &file_, const std::string &data_,
+                        const int &mode_ = static_cast<int>(std::ios::binary) | static_cast<int>(std::ios::out) |
+                                           static_cast<int>(std::ios::trunc))
+  {
+    bool result = false;
+    do
+    {
+      if (data_.empty())
+        break;
 #if 0
    if (!Win::AccessA(Win::GetPathByPathnameA(FilePathname)))
     Win::CreateDirectoryA(Win::GetPathByPathnameA(FilePathname));
 #endif
-   std::ofstream of(file_, static_cast<std::_Ios_Openmode>(mode_));
-   if (!of.is_open())
-    break;
-   of << data_;
-   of.close();
-   result = true;
-  } while (0);
-  return result;
- }
+std::fstream of(file_,static_cast<std::ios_base::openmode>(mode_));
+      if (!of.is_open())
+        break;
+      of << data_;
+      of.close();
+      result = true;
+    } while (0);
+    return result;
+  }
 
- static bool WriteFileAddto(const std::string &file_, const std::string &data_)
- {
-  bool result = false;
-  do
+  static bool WriteFileAddto(const std::string &file_, const std::string &data_)
   {
-   if (data_.empty())
-    break;
+    bool result = false;
+    do
+    {
+      if (data_.empty())
+        break;
 #if 0
    if (!Win::AccessA(FilePathname))
     Win::CreateDirectoryA(Win::GetPathByPathnameA(FilePathname));
 #endif
-   std::ofstream of(file_, std::ios::binary | std::ios::out | std::ios::app);
-   if (!of.is_open())
-    break;
-   of << data_;
-   of.close();
-   result = true;
-  } while (0);
-  return result;
- }
-
- static std::string BinaryToHexString(const std::string &s)
- {
-  std::ostringstream oss;
-  for (unsigned char ch : s)
-  {
-   #if WIN32
-   oss << std::hex << std::setw(2) << std::setfill('0') << (int)ch;
-   #endif
+      std::ofstream of(file_, std::ios::binary | std::ios::out | std::ios::app);
+      if (!of.is_open())
+        break;
+      of << data_;
+      of.close();
+      result = true;
+    } while (0);
+    return result;
   }
-  return oss.str();
- }
 
- static std::string HexStringToBinary(const std::string &s)
- {
-  std::string result;
-  do
+  static std::string BinaryToHexString(const std::string &s)
   {
-   if ((s.length() % 2) != 0)
-   {
-    break;
-   }
-   result.reserve(s.length() / 2);
-   std::string extract;
-   for (std::string::const_iterator pos = s.begin(); pos < s.end(); pos += 2)
-   {
-    extract.assign(pos, pos + 2);
-    result.push_back(std::stoi(extract, nullptr, 16));
-   }
-  } while (0);
-  return result;
- }
+    std::ostringstream oss;
+    for (unsigned char ch : s)
+    {
+#if WIN32
+      oss << std::hex << std::setw(2) << std::setfill('0') << (int)ch;
+#endif
+    }
+    return oss.str();
+  }
 
- static std::vector<std::string> StringSpilt(const std::string &input,
-                                             const std::string &delim)
- {
-  std::vector<std::string> result;
-  do
+  static std::string HexStringToBinary(const std::string &s)
   {
-   if (input.empty())
-    break;
-   if (delim.empty())
-   {
-    result.emplace_back(input);
-    break;
-   }
-   std::regex re(delim);
-   result = std::vector<std::string>{
-       std::sregex_token_iterator(input.begin(), input.end(), re, -1),
-       std::sregex_token_iterator()};
-  } while (0);
-  return result;
- }
- static std::vector<std::wstring> WStringSplit(const std::wstring &input,
-                                               const std::wstring &delim)
- {
-  std::vector<std::wstring> result;
-  do
+    std::string result;
+    do
+    {
+      if ((s.length() % 2) != 0)
+      {
+        break;
+      }
+      result.reserve(s.length() / 2);
+      std::string extract;
+      for (std::string::const_iterator pos = s.begin(); pos < s.end(); pos += 2)
+      {
+        extract.assign(pos, pos + 2);
+        result.push_back(std::stoi(extract, nullptr, 16));
+      }
+    } while (0);
+    return result;
+  }
+
+  static std::vector<std::string> StringSpilt(const std::string &input,
+                                              const std::string &delim)
   {
-   if (input.empty())
-    break;
-   if (delim.empty())
-   {
-    result.emplace_back(input);
-    break;
-   }
-   std::wregex re(delim);
-   result = std::vector<std::wstring>{
-       std::wsregex_token_iterator(input.begin(), input.end(), re, -1),
-       std::wsregex_token_iterator()};
-  } while (0);
-  return result;
- }
+    std::vector<std::string> result;
+    do
+    {
+      if (input.empty())
+        break;
+      if (delim.empty())
+      {
+        result.emplace_back(input);
+        break;
+      }
+      std::regex re(delim);
+      result = std::vector<std::string>{
+          std::sregex_token_iterator(input.begin(), input.end(), re, -1),
+          std::sregex_token_iterator()};
+    } while (0);
+    return result;
+  }
+  static std::vector<std::wstring> WStringSplit(const std::wstring &input,
+                                                const std::wstring &delim)
+  {
+    std::vector<std::wstring> result;
+    do
+    {
+      if (input.empty())
+        break;
+      if (delim.empty())
+      {
+        result.emplace_back(input);
+        break;
+      }
+      std::wregex re(delim);
+      result = std::vector<std::wstring>{
+          std::wsregex_token_iterator(input.begin(), input.end(), re, -1),
+          std::wsregex_token_iterator()};
+    } while (0);
+    return result;
+  }
 
 #if 0
  //!@ input example : c:\\Windows\\System32\\
@@ -332,117 +336,116 @@ namespace stl
  }
 #endif
 
-
- template <typename T>
+  template <typename T>
 #if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+    requires std::is_convertible_v<T, std::string> ||
+             std::is_convertible_v<T, std::wstring>
 #endif
- static bool PathVerify(const T &input_path)
- {
-  bool result = false;
-  do
+  static bool PathVerify(const T &input_path)
   {
-   if (input_path.empty())
-    break;
-   if (input_path.find('/') == T::npos && input_path.find('\\') == T::npos)
-    break;
-   result = true;
-  } while (0);
-  return result;
- }
- template <typename T>
-#if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
-#endif
- static T PathFix(const T &input_path, const T &path_spilt)
- {
-  T result = input_path;
-  do
-  {
-   if (!PathVerify(result) || path_spilt.empty())
-    break;
-   for (auto it = result.begin(); it != result.end();)
-   {
-    if (*it == '\\' || *it == '/')
+    bool result = false;
+    do
     {
-     *it = *path_spilt.begin();
-    }
-    if (it == result.begin())
-    {
-     ++it;
-     continue;
-    }
-    if (*std::prev(it) == *it && *it == *path_spilt.begin())
-    {
-     it = result.erase(it);
-     continue;
-    }
-    ++it;
-   }
-  } while (0);
-  return result;
- }
-
- template <typename T>
-#if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string>
-#endif
- static T UrlFix(const T &inputUrlOrPath)
- {
-  T result = inputUrlOrPath;
-  if (result.empty())
-   return result;
-  for (auto it = result.begin(); it != result.end(); ++it)
-  {
-   if (*it == '\\')
-    *it = '/';
+      if (input_path.empty())
+        break;
+      if (input_path.find('/') == T::npos && input_path.find('\\') == T::npos)
+        break;
+      result = true;
+    } while (0);
+    return result;
   }
-  do
-  {
-   auto found = result.find("//");
-   if (found == T::npos)
-    break;
-   result.replace(found, T("//").size(), "/");
-  } while (1);
-
-  do
-  {
-   auto found = result.find(":/");
-   if (found == T::npos)
-    break;
-   result.replace(found, T(":/").size(), "://");
-  } while (0);
-  return result;
- }
-
- template <typename T>
+  template <typename T>
 #if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+    requires std::is_convertible_v<T, std::string> ||
+             std::is_convertible_v<T, std::wstring>
 #endif
- static T PathnameToPath(const T &input_pathname)
- {
-  T result = input_pathname;
-  do
+  static T PathFix(const T &input_path, const T &path_spilt)
   {
-   if (result.empty())
-    break;
-   if (!PathVerify(result))
-    break;
-   for (auto rit = result.rbegin(); rit != result.rend(); ++rit)
-   {
-    if (*rit != '\\' && *rit != '/')
+    T result = input_path;
+    do
     {
-     result.resize(std::distance(result.begin(), rit.base()) - 1);
-     continue;
+      if (!PathVerify(result) || path_spilt.empty())
+        break;
+      for (auto it = result.begin(); it != result.end();)
+      {
+        if (*it == '\\' || *it == '/')
+        {
+          *it = *path_spilt.begin();
+        }
+        if (it == result.begin())
+        {
+          ++it;
+          continue;
+        }
+        if (*std::prev(it) == *it && *it == *path_spilt.begin())
+        {
+          it = result.erase(it);
+          continue;
+        }
+        ++it;
+      }
+    } while (0);
+    return result;
+  }
+
+  template <typename T>
+#if __cplusplus >= 201703L
+    requires std::is_convertible_v<T, std::string>
+#endif
+  static T UrlFix(const T &inputUrlOrPath)
+  {
+    T result = inputUrlOrPath;
+    if (result.empty())
+      return result;
+    for (auto it = result.begin(); it != result.end(); ++it)
+    {
+      if (*it == '\\')
+        *it = '/';
     }
-    break;
-   }
-  } while (0);
-  return result;
- }
+    do
+    {
+      auto found = result.find("//");
+      if (found == T::npos)
+        break;
+      result.replace(found, T("//").size(), "/");
+    } while (1);
+
+    do
+    {
+      auto found = result.find(":/");
+      if (found == T::npos)
+        break;
+      result.replace(found, T(":/").size(), "://");
+    } while (0);
+    return result;
+  }
+
+  template <typename T>
+#if __cplusplus >= 201703L
+    requires std::is_convertible_v<T, std::string> ||
+             std::is_convertible_v<T, std::wstring>
+#endif
+  static T PathnameToPath(const T &input_pathname)
+  {
+    T result = input_pathname;
+    do
+    {
+      if (result.empty())
+        break;
+      if (!PathVerify(result))
+        break;
+      for (auto rit = result.rbegin(); rit != result.rend(); ++rit)
+      {
+        if (*rit != '\\' && *rit != '/')
+        {
+          result.resize(std::distance(result.begin(), rit.base()) - 1);
+          continue;
+        }
+        break;
+      }
+    } while (0);
+    return result;
+  }
 } // namespace stl
 
 #pragma comment(lib, "stl.lib")

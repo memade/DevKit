@@ -16,6 +16,11 @@ macro(GFN_ENV_INIT)
    # set(CMAKE_INSTALL_PREFIX "${PROJECT_ROOT_DIR}/bin")
   #endif()
 
+  #option(CMAKE_INSTALL_PREFIX "DevKit install root dir." ${PROJECT_ROOT_DIR}/bin)
+  #set(CMAKE_INSTALL_PREFIX "${PROJECT_ROOT_DIR}/bin")
+
+  add_definitions(-DUNICODE -D_UNICODE)
+  set(CMAKE_CONFIGURATION_TYPES "Debug;Release;" CACHE STRING "info" FORCE)
 
 
   message(STATUS "Current system name '${CMAKE_SYSTEM_NAME}'.")
