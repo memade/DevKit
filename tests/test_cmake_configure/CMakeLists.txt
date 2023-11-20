@@ -1,15 +1,6 @@
-project (${entry_project_name})
-set(PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+project (${entry_name})
 
 GFN_PROJECT_SOURCE_GET(${CMAKE_CURRENT_SOURCE_DIR} OUT_HEADER_S OUT_SOURCE_S)
 set(SOURCES ${OUT_HEADER_S} ${OUT_SOURCE_S})
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-
-#[[
-if((CMAKE_SIZEOF_VOID_P EQUAL 8) OR ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64") OR __x86_64__)
- message(STATUS "x64")
-else()
- message(STATUS "x86")
-endif()
-]]

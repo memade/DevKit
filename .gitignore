@@ -2,6 +2,7 @@ bin
 objs
 libs
 build
+.vscode
 # Prerequisites
 #*.d
 
