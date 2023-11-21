@@ -12,7 +12,7 @@
 
 #define _PLATFORM_STL_VER __cplusplus
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #if _MSC_VER
 #undef _PLATFORM_STL_VER
