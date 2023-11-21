@@ -22,7 +22,8 @@ macro(GFN_ENV_INIT)
   add_definitions(-DUNICODE -D_UNICODE)
   set(CMAKE_CONFIGURATION_TYPES "Debug;Release;" CACHE STRING "info" FORCE)
 
-
+  set(CMAKE_CXX_STANDARD 17)
+  
   message(STATUS "Current system name '${CMAKE_SYSTEM_NAME}'.")
 endmacro(GFN_ENV_INIT)
 

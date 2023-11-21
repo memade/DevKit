@@ -10,71 +10,118 @@
  * @location SHE(ISO 3166-1)
  */
 
+#define _PLATFORM_STL_VER __cplusplus
+
 #ifdef _WINDOWS
 #define _CRT_SECURE_NO_WARNINGS
+#if _MSC_VER
+#undef _PLATFORM_STL_VER
+#define _PLATFORM_STL_VER _MSVC_LANG
+#endif
 #endif
 
+#define _STL_HAS_CXX03 0
+#define _STL_HAS_CXX11 0
+#define _STL_HAS_CXX14 0
+#define _STL_HAS_CXX17 0
+#define _STL_HAS_CXX20 0
+#define _STL_HAS_CXX23 0
+
+#if _PLATFORM_STL_VER >= 199711L
+#undef _STL_HAS_CXX03
+#define _STL_HAS_CXX03 1
+#endif
+
+#if _PLATFORM_STL_VER >= 201103L
+#undef _STL_HAS_CXX11
+#define _STL_HAS_CXX11 1
+#endif
+
+#if _PLATFORM_STL_VER >= 201402L
+#undef _STL_HAS_CXX14
+#define _STL_HAS_CXX14 1
+#endif
+
+#if _PLATFORM_STL_VER >= 201703L
+#undef _STL_HAS_CXX17
+#define _STL_HAS_CXX17 1
+#endif
+
+#if _PLATFORM_STL_VER >= 202002L
+#undef _STL_HAS_CXX20
+#define _STL_HAS_CXX20 1
+#endif
+
+#if _PLATFORM_STL_VER > 202002L
+#undef _STL_HAS_CXX23
+#define _STL_HAS_CXX23 1
+#endif
+
+
+#if _STL_HAS_CXX03
+#include <fcntl.h>
+
 #include <algorithm>
+#include <array>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <list>
+#include <map>
+#include <memory>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#endif
+
+#if _STL_HAS_CXX11
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
-#include <fcntl.h>
-#include <fstream>
 #include <functional>
-#include <iomanip>
-#include <iostream>
-#include <memory>
 #include <mutex>
 #include <random>
 #include <regex>
-#include <sstream>
-#include <string>
 #include <thread>
 #include <tuple>
 #include <typeinfo>
-
-#if __cplusplus >= 199711L //!@ C++ 98 is supported
-
 #endif
 
-#if __cplusplus >= 201103L //!@ C++11 is supported
-
-#endif
-
-#if __cplusplus >= 201402L //!@ C++14 is supported
-
-#endif
-
-#if __cplusplus >= 201703L //!@ C++17 is supported
-//!@discard -- #include <locale>
-//!@discard -- #include <codecvt>
+#if _STL_HAS_CXX14
+#include <bitset>
+#include <deque>
+#include <any>
 #include <filesystem>
+#include <future>
+#include <optional>
 #include <string_view>
 #include <variant>
+#endif
 
+#if _STL_HAS_CXX17
+
+#endif
+
+#if _STL_HAS_CXX20
 #include <concepts>
 #include <coroutine>
 #include <format>
 #endif
 
-#include <array>
-#include <bitset>
-#include <deque>
-#include <future>
-#include <limits>
-#include <list>
-#include <map>
-#include <queue>
-#include <set>
-#include <stack>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
+#if _STL_HAS_CXX23
+#include <span> //(proposed for C++23, but may be available in some compilers)
+#endif
 
 namespace stl {
 
 template <typename T = std::chrono::seconds>
-#if __cplusplus >= 201703L
+#if _STL_HAS_CXX17
   requires std::is_convertible_v<T, std::chrono::milliseconds> ||
            std::is_convertible_v<T, std::chrono::minutes> ||
            std::is_convertible_v<T, std::chrono::microseconds>
@@ -87,7 +134,7 @@ static std::time_t TimeStamp() {
 }
 
 template <typename T = std::string>
-#if __cplusplus >= 201703L
+#if _STL_HAS_CXX17
   requires std::is_convertible_v<T, std::string> ||
            std::is_convertible_v<T, std::wstring>
 #endif
@@ -100,7 +147,7 @@ static T Lower(const T &input) {
 }
 
 template <typename T = std::string>
-#if __cplusplus >= 201703L
+#if _STL_HAS_CXX17
   requires std::is_convertible_v<T, std::string> ||
            std::is_convertible_v<T, std::wstring>
 #endif
