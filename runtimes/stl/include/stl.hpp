@@ -110,7 +110,9 @@
 #if _STL_HAS_CXX20
 #include <concepts>
 #include <coroutine>
+#if _WIN32 && _MSC_VER
 #include <format>
+#endif
 #endif
 
 #if _STL_HAS_CXX23
@@ -121,11 +123,11 @@ namespace stl {
 
 template <typename T = std::chrono::seconds>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::chrono::milliseconds> ||
+requires std::is_convertible_v<T, std::chrono::milliseconds> ||
   std::is_convertible_v<T, std::chrono::minutes> ||
   std::is_convertible_v<T, std::chrono::microseconds>
 #endif
-  static time_t TimeStamp() {
+static time_t TimeStamp() {
   return std::chrono::duration_cast<T>(
            std::chrono::time_point_cast<T>(std::chrono::system_clock::now())
              .time_since_epoch())
@@ -134,10 +136,10 @@ template <typename T = std::chrono::seconds>
 
 template <typename T = std::string>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static T Lower(const T &input) {
+static T Lower(const T &input) {
   T result{input};
   if (!result.empty()) {
     std::transform(result.begin(), result.end(), result.begin(), ::tolower);
@@ -147,10 +149,10 @@ template <typename T = std::string>
 
 template <typename T = std::string>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static T Upper(const T &input) {
+static T Upper(const T &input) {
   T result{input};
   if (!result.empty()) {
     std::transform(result.begin(), result.end(), result.begin(), ::toupper);
@@ -307,10 +309,10 @@ static std::vector<std::wstring> WStringSplit(const std::wstring &input,
   //!
 template <typename T>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static bool CreateDirectories(const T &input_path) {
+static bool CreateDirectories(const T &input_path) {
   bool result = false;
   T path_tmp = input_path;
   do {
@@ -334,10 +336,10 @@ template <typename T>
 
 template <typename T>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static bool PathOrFileExists(const T &input_path) {
+static bool PathOrFileExists(const T &input_path) {
   bool result = false;
   do {
     if (input_path.empty())
@@ -352,10 +354,10 @@ template <typename T>
 
 template <typename T>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static bool PathVerify(const T &input_path) {
+static bool PathVerify(const T &input_path) {
   bool result = false;
   do {
     if (input_path.empty())
@@ -368,10 +370,10 @@ template <typename T>
 }
 template <typename T>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static T PathFix(const T &input_path, const T &path_spilt) {
+static T PathFix(const T &input_path, const T &path_spilt) {
   T result = input_path;
   do {
     if (!PathVerify(result) || path_spilt.empty())
@@ -398,7 +400,7 @@ template <typename T>
 #if _STL_HAS_CXX20
 requires std::is_convertible_v<T, std::string>
 #endif
-  static T UrlFix(const T &inputUrlOrPath) {
+static T UrlFix(const T &inputUrlOrPath) {
   T result = inputUrlOrPath;
   if (result.empty())
     return result;
@@ -424,10 +426,10 @@ requires std::is_convertible_v<T, std::string>
 
 template <typename T>
 #if _STL_HAS_CXX20
-  requires std::is_convertible_v<T, std::string> ||
+requires std::is_convertible_v<T, std::string> ||
   std::is_convertible_v<T, std::wstring>
 #endif
-  static T PathnameToPath(const T &input_pathname) {
+static T PathnameToPath(const T &input_pathname) {
   T result = input_pathname;
   do {
     if (result.empty())
@@ -444,6 +446,7 @@ template <typename T>
   } while (0);
   return result;
 }
+
 } // namespace stl
 
 #pragma comment(lib, "stl.lib")

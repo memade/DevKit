@@ -63,7 +63,14 @@
   "thread": "cpp",
   "typeinfo": "cpp",
   "variant": "cpp",
-  "any": "cpp"
+  "any": "cpp",
+  "compare": "cpp",
+  "concepts": "cpp",
+  "coroutine": "cpp",
+  "numbers": "cpp",
+  "semaphore": "cpp",
+  "span": "cpp",
+  "stop_token": "cpp"
  },
  "editor.tabSize": 1,
  "clang-format.executable": "clang-format"

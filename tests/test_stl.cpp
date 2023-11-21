@@ -6,7 +6,10 @@ int main(int argc, char **argv) {
 
   auto executablePath =
     std::filesystem::current_path() / std::filesystem::path(argv[0]);
-  std::cout << "Executable Path: " << executablePath << std::endl;
+  std::string strPath = executablePath.string();
+  std::cout << strPath << executablePath << std::endl;
+
+  auto readBuffer = stl::ReadFile(strPath);
 
   return 0;
 }

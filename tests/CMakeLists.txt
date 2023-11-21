@@ -48,6 +48,15 @@ foreach(entry ${entries})
       PRIVATE
       ${PROJECT_ROOT_DIR}/bin/runtimes/stl/${CMAKE_SYSTEM_NAME}/lib
       )
+    elseif("${lower_entry_name}" STREQUAL "test_libuv")
+      target_include_directories(${entry_name} 
+      PRIVATE
+      ${PROJECT_ROOT_DIR}/third_party/libuv/include
+      )
+      target_link_directories(${entry_name}
+      PRIVATE
+      ${PROJECT_ROOT_DIR}/bin/third_party/libuv/${CMAKE_SYSTEM_NAME}/lib
+      )
     endif()
 
 
