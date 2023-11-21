@@ -57,7 +57,6 @@
 #define _STL_HAS_CXX23 1
 #endif
 
-
 #if _STL_HAS_CXX03
 #include <fcntl.h>
 
@@ -94,9 +93,9 @@
 #endif
 
 #if _STL_HAS_CXX14
+#include <any>
 #include <bitset>
 #include <deque>
-#include <any>
 #include <filesystem>
 #include <future>
 #include <optional>
@@ -121,12 +120,12 @@
 namespace stl {
 
 template <typename T = std::chrono::seconds>
-#if _STL_HAS_CXX17
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::chrono::milliseconds> ||
-           std::is_convertible_v<T, std::chrono::minutes> ||
-           std::is_convertible_v<T, std::chrono::microseconds>
+  std::is_convertible_v<T, std::chrono::minutes> ||
+  std::is_convertible_v<T, std::chrono::microseconds>
 #endif
-static std::time_t TimeStamp() {
+  static time_t TimeStamp() {
   return std::chrono::duration_cast<T>(
            std::chrono::time_point_cast<T>(std::chrono::system_clock::now())
              .time_since_epoch())
@@ -134,11 +133,11 @@ static std::time_t TimeStamp() {
 }
 
 template <typename T = std::string>
-#if _STL_HAS_CXX17
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+  std::is_convertible_v<T, std::wstring>
 #endif
-static T Lower(const T &input) {
+  static T Lower(const T &input) {
   T result{input};
   if (!result.empty()) {
     std::transform(result.begin(), result.end(), result.begin(), ::tolower);
@@ -147,11 +146,11 @@ static T Lower(const T &input) {
 }
 
 template <typename T = std::string>
-#if _STL_HAS_CXX17
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+  std::is_convertible_v<T, std::wstring>
 #endif
-static T Upper(const T &input) {
+  static T Upper(const T &input) {
   T result{input};
   if (!result.empty()) {
     std::transform(result.begin(), result.end(), result.begin(), ::toupper);
@@ -304,67 +303,59 @@ static std::vector<std::wstring> WStringSplit(const std::wstring &input,
   return result;
 }
 
-#if 0
- //!@ input example : c:\\Windows\\System32\\
+//!@ input example : c:\\Windows\\System32\\
   //!
- template <typename T>
-#if __cplusplus >= 201703L
+template <typename T>
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+  std::is_convertible_v<T, std::wstring>
 #endif
- static bool CreateDirectories(const T &input_path)
- {
+  static bool CreateDirectories(const T &input_path) {
   bool result = false;
   T path_tmp = input_path;
-  do
-  {
-   if (path_tmp.empty())
-    break;
-   do
-   {
+  do {
     if (path_tmp.empty())
-     return false;
-    if (*std::prev(path_tmp.end()) == '\\' ||
-        *std::prev(path_tmp.end()) == '/')
-    {
-     path_tmp.pop_back();
-     continue;
-    }
-    break;
-   } while (1);
-   result =
-       std::filesystem::create_directories(std::filesystem::path(path_tmp));
+      break;
+    do {
+      if (path_tmp.empty())
+        return false;
+      if (*std::prev(path_tmp.end()) == '\\' ||
+          *std::prev(path_tmp.end()) == '/') {
+        path_tmp.pop_back();
+        continue;
+      }
+      break;
+    } while (1);
+    result =
+      std::filesystem::create_directories(std::filesystem::path(path_tmp));
   } while (0);
   return result;
- }
-
- template <typename T>
-#if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
-#endif
- static bool PathOrFileExists(const T &input_path)
- {
-  bool result = false;
-  do
-  {
-   if (input_path.empty())
-    break;
-   std::filesystem::path path = input_path;
-   if (!std::filesystem::exists(path))
-    break;
-   result = true;
-  } while (0);
-  return result;
- }
-#endif
+}
 
 template <typename T>
-#if __cplusplus >= 201703L
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+  std::is_convertible_v<T, std::wstring>
 #endif
-static bool PathVerify(const T &input_path) {
+  static bool PathOrFileExists(const T &input_path) {
+  bool result = false;
+  do {
+    if (input_path.empty())
+      break;
+    std::filesystem::path path = input_path;
+    if (!std::filesystem::exists(path))
+      break;
+    result = true;
+  } while (0);
+  return result;
+}
+
+template <typename T>
+#if _STL_HAS_CXX20
+  requires std::is_convertible_v<T, std::string> ||
+  std::is_convertible_v<T, std::wstring>
+#endif
+  static bool PathVerify(const T &input_path) {
   bool result = false;
   do {
     if (input_path.empty())
@@ -376,11 +367,11 @@ static bool PathVerify(const T &input_path) {
   return result;
 }
 template <typename T>
-#if __cplusplus >= 201703L
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+  std::is_convertible_v<T, std::wstring>
 #endif
-static T PathFix(const T &input_path, const T &path_spilt) {
+  static T PathFix(const T &input_path, const T &path_spilt) {
   T result = input_path;
   do {
     if (!PathVerify(result) || path_spilt.empty())
@@ -404,10 +395,10 @@ static T PathFix(const T &input_path, const T &path_spilt) {
 }
 
 template <typename T>
-#if __cplusplus >= 201703L
-  requires std::is_convertible_v<T, std::string>
+#if _STL_HAS_CXX20
+requires std::is_convertible_v<T, std::string>
 #endif
-static T UrlFix(const T &inputUrlOrPath) {
+  static T UrlFix(const T &inputUrlOrPath) {
   T result = inputUrlOrPath;
   if (result.empty())
     return result;
@@ -432,11 +423,11 @@ static T UrlFix(const T &inputUrlOrPath) {
 }
 
 template <typename T>
-#if __cplusplus >= 201703L
+#if _STL_HAS_CXX20
   requires std::is_convertible_v<T, std::string> ||
-           std::is_convertible_v<T, std::wstring>
+  std::is_convertible_v<T, std::wstring>
 #endif
-static T PathnameToPath(const T &input_pathname) {
+  static T PathnameToPath(const T &input_pathname) {
   T result = input_pathname;
   do {
     if (result.empty())

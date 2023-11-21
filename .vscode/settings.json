@@ -62,7 +62,8 @@
   "streambuf": "cpp",
   "thread": "cpp",
   "typeinfo": "cpp",
-  "variant": "cpp"
+  "variant": "cpp",
+  "any": "cpp"
  },
  "editor.tabSize": 1,
  "clang-format.executable": "clang-format"
