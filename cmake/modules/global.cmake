@@ -1,65 +1,84 @@
-macro(GFN_ENV_INIT)
-  # Set system name.
-  if(WIN32)
-   set(CMAKE_SYSTEM_NAME "windows")
-  elseif(UNIX)
-   set(CMAKE_SYSTEM_NAME "linux")
+# INPUT_TOOLCHAIN_NAME => 'gcc' or 'clang' or 'msvc' or (''==default)
+macro(GFN_TOOLCHAIN_SET INPUT_TOOLCHAIN_NAME)
+  if("${INPUT_TOOLCHAIN_NAME}" STREQUAL "")
+    set(INPUT_TOOLCHAIN_NAME "gcc")
   else()
-   set(CMAKE_SYSTEM_NAME "unknown")
+    string(TOLOWER ${INPUT_TOOLCHAIN_NAME} ${INPUT_TOOLCHAIN_NAME})
+  endif()
+  
+  set(CMAKE_CXX_STANDARD 17)
+
+  if("${INPUT_TOOLCHAIN_NAME}" STREQUAL "clang")
+    set(CMAKE_C_COMPILER "clang")
+    set(CMAKE_CXX_COMPILER "clang++")
+    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -v -std=c99 -Wall -Wno-unused-function")
+    set(CMAKE_C_FLAGS_DEBUG "-g")
+    set(CMAKE_C_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O4 -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
+    
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -v -stdlib=libc++ -Wall -Wno-unused-function")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g")
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O4 -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+    
+    set (CMAKE_AR "llvm-ar")
+    set (CMAKE_LINKER "lld")
+    set(CMAKE_NM "llvm-nm")
+    set(CMAKE_OBJDUMP "llvm-objdump")
+    set(CMAKE_RANLIB "llvm-ranlib")
+  elseif("${INPUT_TOOLCHAIN_NAME}" STREQUAL "gcc")
+    set(CMAKE_C_COMPILER "gcc")
+    set(CMAKE_CXX_COMPILER "g++")
+    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -v -std=c99 -Wall -Wno-unused-function")
+    set(CMAKE_C_FLAGS_DEBUG "-g")
+    set(CMAKE_C_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O4 -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
+    
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -v -stdlib=libc++ -Wall -Wno-unused-function")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g")
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "-Os -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "-O4 -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+    
+    set (CMAKE_AR "ar")
+    set (CMAKE_LINKER "ld")
+    set(CMAKE_NM "nm")
+    set(CMAKE_OBJDUMP "objdump")
+    set(CMAKE_RANLIB "ranlib")
+  elseif("${INPUT_TOOLCHAIN_NAME}" STREQUAL "msvc")
+
+  endif()
+endmacro(GFN_TOOLCHAIN_SET)
+
+
+macro(GFN_ENV_INIT)
+  if(WIN32)
+    set(CMAKE_SYSTEM_NAME "Windows")
+  elseif(UNIX)
+    set(CMAKE_SYSTEM_NAME "Linux")
+  else()
+    set(CMAKE_SYSTEM_NAME "Unknown System")
   endif()
 
-  # Set the current project root directory.
-  set(PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-  # Set the default installation directory.
-  #if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-   # set(CMAKE_INSTALL_PREFIX "${PROJECT_ROOT_DIR}/bin")
-  #endif()
-
-  #option(CMAKE_INSTALL_PREFIX "DevKit install root dir." ${PROJECT_ROOT_DIR}/bin)
-  #set(CMAKE_INSTALL_PREFIX "${PROJECT_ROOT_DIR}/bin")
+  if(NOT("${CMAKE_SYSTEM_NAME}" STREQUAL ""))
+    message(STATUS "Current system name '${CMAKE_SYSTEM_NAME}'.")
+  endif()
 
   add_definitions(-DUNICODE -D_UNICODE)
   set(CMAKE_CONFIGURATION_TYPES "Debug;Release;" CACHE STRING "info" FORCE)
 
-  set(CMAKE_CXX_STANDARD 20)
-  
-  message(STATUS "Current system name '${CMAKE_SYSTEM_NAME}'.")
+  GFN_TOOLCHAIN_SET("gcc")
 endmacro(GFN_ENV_INIT)
 
 macro(GFN_ENV_UNINIT)
   
 endmacro(GFN_ENV_UNINIT)
 
-
-macro(GFN_CLANG_TOOLCHAIN_SET)
- if(UNIX)
-  set(CMAKE_SYSTEM_NAME Linux)
-  set (CMAKE_C_COMPILER             "clang")
-  set (CMAKE_C_FLAGS                "-Wall -std=c99 -v")
-  set (CMAKE_C_FLAGS_DEBUG          "-g")
-  set (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-  set (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
-  set (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
-
-  set (CMAKE_CXX_COMPILER             "clang++")
-  set (CMAKE_CXX_FLAGS                "-Wall -v")
-  set (CMAKE_CXX_FLAGS_DEBUG          "-g")
-  set (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-  set (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-  set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-
-  set (CMAKE_AR      "/usr/bin/llvm-ar")
-  set (CMAKE_LINKER  "/usr/bin/llvm-ld")
-  set (CMAKE_NM      "/usr/bin/llvm-nm")
-  set (CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
-  set (CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
- elseif(WIN32)
-  set(CMAKE_SYSTEM_NAME Windows)
-
-
- endif()
-endmacro(GFN_CLANG_TOOLCHAIN_SET)
 
 macro(GFN_RUNTIME_SET)
  if(WIN32)

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 list(APPEND CMAKE_MODULE_PATH 
-${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/
+${PROJECT_ROOT_DIR}/cmake/modules/
 )
 include(global)
 
@@ -17,13 +19,13 @@ message(STATUS "Current project root dir '${PROJECT_ROOT_DIR}'.")
 
 option(DEVKIT_ENABLE_TESTS "Enable tests build." ON)
 if(DEVKIT_ENABLE_TESTS AND (EXISTS ${PROJECT_ROOT_DIR}/tests/CMakeLists.txt))
-#GFN_SET_TARGET_OUTDIR(${PROJECT_ROOT_DIR} "/bin/tests/" "libs" "objs")
+GFN_SET_TARGET_OUTDIR(${PROJECT_ROOT_DIR} "/bin/tests/" "libs" "objs")
 add_subdirectory(${PROJECT_ROOT_DIR}/tests/)
 endif()
 
 option(DEVKIT_ENABLE_RUNTIMES "Enable runtimes build." ON)
 if(DEVKIT_ENABLE_RUNTIMES AND (EXISTS ${PROJECT_ROOT_DIR}/runtimes/CMakeLists.txt))
-#GFN_SET_TARGET_OUTDIR(${PROJECT_ROOT_DIR} "/bin/runtimes/" "libs" "libs")
+GFN_SET_TARGET_OUTDIR(${PROJECT_ROOT_DIR} "/bin/runtimes/" "libs" "libs")
 add_subdirectory(${PROJECT_ROOT_DIR}/runtimes/)
 endif()
 

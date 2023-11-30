@@ -73,5 +73,11 @@
   "stop_token": "cpp"
  },
  "editor.tabSize": 1,
- "clang-format.executable": "clang-format"
+ "clang-format.executable": "C:\\msys64\\clang64\\bin\\clang-format.exe",
+ "C_Cpp.clang_format_path": "C:\\msys64\\clang64\\bin\\clang-format.exe",
+ "C_Cpp.clang_format_fallbackStyle": "Visual Studio",
+ "cmake.configureOnEdit": false,
+ "cmake.configureOnOpen": false,
+ "cmake.options.statusBarVisibility": "visible",
+ "cmake.generator": "Ninja"
 }

@@ -123,9 +123,9 @@ namespace stl {
 
 template <typename T = std::chrono::seconds>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::chrono::milliseconds> ||
-  std::is_convertible_v<T, std::chrono::minutes> ||
-  std::is_convertible_v<T, std::chrono::microseconds>
+  requires std::is_convertible_v<T, std::chrono::milliseconds> ||
+           std::is_convertible_v<T, std::chrono::minutes> ||
+           std::is_convertible_v<T, std::chrono::microseconds>
 #endif
 static time_t TimeStamp() {
   return std::chrono::duration_cast<T>(
@@ -136,8 +136,8 @@ static time_t TimeStamp() {
 
 template <typename T = std::string>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static T Lower(const T &input) {
   T result{input};
@@ -149,8 +149,8 @@ static T Lower(const T &input) {
 
 template <typename T = std::string>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static T Upper(const T &input) {
   T result{input};
@@ -309,8 +309,8 @@ static std::vector<std::wstring> WStringSplit(const std::wstring &input,
   //!
 template <typename T>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static bool CreateDirectories(const T &input_path) {
   bool result = false;
@@ -336,8 +336,8 @@ static bool CreateDirectories(const T &input_path) {
 
 template <typename T>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static bool PathOrFileExists(const T &input_path) {
   bool result = false;
@@ -354,8 +354,8 @@ static bool PathOrFileExists(const T &input_path) {
 
 template <typename T>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static bool PathVerify(const T &input_path) {
   bool result = false;
@@ -370,8 +370,8 @@ static bool PathVerify(const T &input_path) {
 }
 template <typename T>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static T PathFix(const T &input_path, const T &path_spilt) {
   T result = input_path;
@@ -398,7 +398,7 @@ static T PathFix(const T &input_path, const T &path_spilt) {
 
 template <typename T>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string>
+  requires std::is_convertible_v<T, std::string>
 #endif
 static T UrlFix(const T &inputUrlOrPath) {
   T result = inputUrlOrPath;
@@ -426,8 +426,8 @@ static T UrlFix(const T &inputUrlOrPath) {
 
 template <typename T>
 #if _STL_HAS_CXX20
-requires std::is_convertible_v<T, std::string> ||
-  std::is_convertible_v<T, std::wstring>
+  requires std::is_convertible_v<T, std::string> ||
+           std::is_convertible_v<T, std::wstring>
 #endif
 static T PathnameToPath(const T &input_pathname) {
   T result = input_pathname;
@@ -449,7 +449,6 @@ static T PathnameToPath(const T &input_pathname) {
 
 } // namespace stl
 
-#pragma comment(lib, "stl.lib")
 /// /*新生®（上海）**/
 /// /*2022_02_19T06:18:54.5642649Z**/
 /// /*_ _ _ _ _ _ _ www.skstu.com _ _ _ _ _ _ _**/
